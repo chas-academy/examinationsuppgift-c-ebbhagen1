@@ -16,16 +16,17 @@ int main() {
     char Name[students][50];
     int Scores[students][tests];
 
-    
+    // Inmatning
     for (int i = 0; i < students; i++) {
-        scanf("%s", Name[i]);
-        capitalize(Name[i]);     
+        scanf("%49s", Name[i]);
+        capitalize(Name[i]);
+
         for (int j = 0; j < tests; j++) {
             scanf("%d", &Scores[i][j]);
         }
     }
 
-   
+    // Beräkna medelvärde per elev
     float averages[students];
     for (int i = 0; i < students; i++) {
         int sum = 0;
@@ -35,7 +36,24 @@ int main() {
         averages[i] = sum / (float)tests;
     }
 
-   
+    // Beräkna klassens totala medelvärde
+    float class_total = 0;
+    for (int i = 0; i < students; i++) {
+        for (int j = 0; j < tests; j++) {
+            class_total += Scores[i][j];
+        }
+    }
+    float class_average = class_total / (students * tests);
+
+    // Skriv ut elever under klassens medelvärde (i originalordning)
+    printf("Elever under klassens medelvärde:\n");
+    for (int i = 0; i < students; i++) {
+        if (averages[i] < class_average) {
+            printf("%s\n", Name[i]);
+        }
+    }
+
+    // Sortera för att hitta topp 3 (valfritt)
     for (int i = 0; i < students - 1; i++) {
         for (int j = 0; j < students - i - 1; j++) {
             if (averages[j] < averages[j + 1]) {
@@ -52,11 +70,11 @@ int main() {
         }
     }
 
-    
+    // Skriv ut topp 3
+    printf("\nTopp 3:\n");
     for (int i = 0; i < 3; i++) {
         printf("%s\n", Name[i]);
     }
 
     return 0;
 }
-
