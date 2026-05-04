@@ -53,7 +53,7 @@ int main() {
         }
     }
 
-    // Sortera för att hitta topp 3 (valfritt)
+    // Sortera för att hitta topp 3 (din ursprungliga sortering)
     for (int i = 0; i < students - 1; i++) {
         for (int j = 0; j < students - i - 1; j++) {
             if (averages[j] < averages[j + 1]) {
