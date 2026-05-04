@@ -2,78 +2,64 @@
 #include <ctype.h>
 #include <string.h>
 
-#define students 5
-#define tests 13
+#define STUDENTS 5
+#define TESTS 13
 
-void capitalize(char *name) {
-    name[0] = toupper(name[0]);
-    for (int i = 1; name[i] != '\0'; i++) {
-        name[i] = tolower(name[i]);
+// Funktion för att formatera namnet: Stor bokstav först, resten små.
+void format_name(char *name) {
+    if (name[0] != '\0') {
+        name[0] = toupper(name[0]);
+        for (int i = 1; name[i] != '\0'; i++) {
+            name[i] = tolower(name[i]);
+        }
     }
 }
 
 int main() {
-    char Name[students][50];
-    int Scores[students][tests];
+    char names[STUDENTS][11]; // Max 10 tecken enligt specifikation + nollterminator
+    int scores[STUDENTS][TESTS];
+    float averages[STUDENTS];
+    float total_class_sum = 0;
 
-    // Inmatning
-    for (int i = 0; i < students; i++) {
-        scanf("%49s", Name[i]);
-        capitalize(Name[i]);
+    // 1. Inläsning
+    for (int i = 0; i < STUDENTS; i++) {
+        // Läser in namn (max 10 tecken)
+        if (scanf("%10s", names[i]) != 1) break;
+        format_name(names[i]);
 
-        for (int j = 0; j < tests; j++) {
-            scanf("%d", &Scores[i][j]);
+        int student_sum = 0;
+        for (int j = 0; j < TESTS; j++) {
+            scanf("%d", &scores[i][j]);
+            student_sum += scores[i][j];
         }
-    }
-
-    // Beräkna medelvärde per elev
-    float averages[students];
-    for (int i = 0; i < students; i++) {
-        int sum = 0;
-        for (int j = 0; j < tests; j++) {
-            sum += Scores[i][j];
-        }
-        averages[i] = sum / (float)tests;
+        
+        // Beräkna medelvärde för denna elev
+        averages[i] = (float)student_sum / TESTS;
+        
+        // Lägg till i klassens totala summa för senare beräkning av snitt
+        total_class_sum += student_sum;
     }
 
     // Beräkna klassens totala medelvärde
-    float class_total = 0;
-    for (int i = 0; i < students; i++) {
-        for (int j = 0; j < tests; j++) {
-            class_total += Scores[i][j];
+    float class_average = total_class_sum / (STUDENTS * TESTS);
+
+    // 2. Analys: Identifiera elev med högst medelpoäng
+    int best_student_index = 0;
+    for (int i = 1; i < STUDENTS; i++) {
+        if (averages[i] > averages[best_student_index]) {
+            best_student_index = i;
         }
     }
-    float class_average = class_total / (students * tests);
 
-    // Skriv ut elever under klassens medelvärde (i originalordning)
-    printf("Elever under klassens medelvärde:\n");
-    for (int i = 0; i < students; i++) {
+    // UTSKRIFT: Namnet på eleven med högst medelpoäng
+    printf("%s\n", names[best_student_index]);
+
+    // 3. Analys: Identifiera elever under gruppens snitt
+    // Vi loopar igenom i originalordning (0 till 4)
+    for (int i = 0; i < STUDENTS; i++) {
         if (averages[i] < class_average) {
-            printf("%s\n", Name[i]);
+            printf("%s\n", names[i]);
         }
-    }
-
-    // Sortera för att hitta topp 3 (din ursprungliga sortering)
-    for (int i = 0; i < students - 1; i++) {
-        for (int j = 0; j < students - i - 1; j++) {
-            if (averages[j] < averages[j + 1]) {
-
-                float temp_avg = averages[j];
-                averages[j] = averages[j + 1];
-                averages[j + 1] = temp_avg;
-
-                char temp_name[50];
-                strcpy(temp_name, Name[j]);
-                strcpy(Name[j], Name[j + 1]);
-                strcpy(Name[j + 1], temp_name);
-            }
-        }
-    }
-
-    // Skriv ut topp 3
-    printf("\nTopp 3:\n");
-    for (int i = 0; i < 3; i++) {
-        printf("%s\n", Name[i]);
     }
 
     return 0;
